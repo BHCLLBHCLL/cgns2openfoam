@@ -5,11 +5,6 @@ build/Makefile
 build/cmake_install.cmake
 build/install_manifest.txt
 build/CTestTestfile.cmake
-build/CMakeFiles/
-build/CMakeCache.txt
-build/Makefile
-build/cmake_install.cmake
-build/install_manifest.txt
 cmake-build-*/
 
 # IDE

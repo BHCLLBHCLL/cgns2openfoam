@@ -1,0 +1,47 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Website:  https://openfoam.org                  |
+|   \\  /    A nd           | Version:  converted by cgns2openfoam            |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       polyBoundaryMesh;
+    object      boundary;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+4
+(
+    Interface_1_airZone
+    {
+        type            cyclicAMI;
+        nFaces          12566;
+        startFace       798664;
+        neighbourPatch  Interface_1_bladeZone;
+    }
+    Interface_1_bladeZone
+    {
+        type            cyclicAMI;
+        nFaces          12566;
+        startFace       811230;
+        neighbourPatch  Interface_1_airZone;
+    }
+    airZone_outlet
+    {
+        type            patch;
+        nFaces          39976;
+        startFace       823796;
+    }
+    bladeZone_blade
+    {
+        type            wall;
+        nFaces          980;
+        startFace       863772;
+    }
+)
+
+// ************************************************************************* //

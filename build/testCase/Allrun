@@ -1,0 +1,16 @@
+#!/bin/bash
+cd "${0%/*}" || exit
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions
+
+# Check mesh quality
+runApplication checkMesh
+
+# Run in parallel
+runApplication decomposePar
+runParallel $(getApplication)
+runApplication reconstructPar
+
+# Or run serial (comment above, uncomment below)
+# runApplication $(getApplication)
+
+echo "Done!"

@@ -22,4 +22,3 @@ cmake-build-*/
 *.o
 *.a
 *.so
-cgns2openfoam

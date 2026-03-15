@@ -92,6 +92,12 @@ myCase/
 └── README.md
 ```
 
+## CGNS 测试库
+
+仓库内提供 **cgns_test_lib**，包含 10+ 个测试用例（单区域四面体/六面体、3D 外流场、管流、电子产品温度场、散热器、两区域 interface、风扇转子/静子及瞬态 interface、多区域混合单元等）。可用于验证转换与回归测试。
+
+详见 [cgns_test_lib/README.md](cgns_test_lib/README.md)。
+
 ## 限制
 
 - 仅支持非结构化网格

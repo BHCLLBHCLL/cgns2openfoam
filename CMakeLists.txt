@@ -10,10 +10,10 @@ set(CGNS_ROOT "$ENV{CGNS_ROOT}" CACHE PATH "CGNS installation root")
 
 # Fallback paths if environment not set
 if(NOT HDF5_ROOT)
-    set(HDF5_ROOT "/home/sdcll221/Programs/hdf5-2.0.0")
+    set(HDF5_ROOT "/home/sdcll221/programs/hdf5-2.0.0")
 endif()
 if(NOT CGNS_ROOT)
-    set(CGNS_ROOT "/home/sdcll221/Programs/CGNS-4.5.1")
+    set(CGNS_ROOT "/home/sdcll221/programs/CGNS-4.2.0")
 endif()
 
 message(STATUS "HDF5_ROOT: ${HDF5_ROOT}")
@@ -72,3 +72,23 @@ set_target_properties(cgns2openfoam PROPERTIES
 
 # Install
 install(TARGETS cgns2openfoam DESTINATION bin)
+
+# Optional: minimal CGNS writer for test lib (generates compatible mesh)
+add_executable(write_cgns_minimal tools/write_cgns_minimal.cpp)
+target_include_directories(write_cgns_minimal PRIVATE ${CGNS_INCLUDE_DIR} ${HDF5_INCLUDE_DIR})
+target_link_libraries(write_cgns_minimal PRIVATE ${CGNS_LIBRARY} ${HDF5_LIBRARY})
+set_target_properties(write_cgns_minimal PROPERTIES
+    INSTALL_RPATH "${CGNS_ROOT}/lib;${HDF5_ROOT}/lib"
+    BUILD_RPATH "${CGNS_ROOT}/lib;${HDF5_ROOT}/lib"
+)
+install(TARGETS write_cgns_minimal DESTINATION bin)
+
+# Generate all cgns_test_lib cases (01-12)
+add_executable(write_cgns_cases tools/write_cgns_cases.cpp)
+target_include_directories(write_cgns_cases PRIVATE ${CGNS_INCLUDE_DIR} ${HDF5_INCLUDE_DIR})
+target_link_libraries(write_cgns_cases PRIVATE ${CGNS_LIBRARY} ${HDF5_LIBRARY})
+set_target_properties(write_cgns_cases PROPERTIES
+    INSTALL_RPATH "${CGNS_ROOT}/lib;${HDF5_ROOT}/lib"
+    BUILD_RPATH "${CGNS_ROOT}/lib;${HDF5_ROOT}/lib"
+)
+install(TARGETS write_cgns_cases DESTINATION bin)

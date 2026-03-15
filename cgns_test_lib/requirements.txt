@@ -1,0 +1,5 @@
+# Dependencies for generating CGNS test meshes (cgns_test_lib)
+# Python 3.8+
+numpy>=1.20
+meshio>=5.0
+h5py>=3.0

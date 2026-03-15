@@ -17,3 +17,6 @@ cmake-build-*/
 *.o
 *.a
 *.so
+
+# Python venv for cgns_test_lib mesh generator
+.venv_cgns_test/

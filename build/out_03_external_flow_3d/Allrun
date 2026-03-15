@@ -1,0 +1,4 @@
+#!/bin/bash
+cd "${0%/*}" || exit 1
+[ -n "${OPENFOAM_BASHRC}" ] && source "${OPENFOAM_BASHRC}"
+simpleFoam

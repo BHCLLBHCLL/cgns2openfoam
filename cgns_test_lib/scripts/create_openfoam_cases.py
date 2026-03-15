@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-为 cgns_test_lib 转换后的 10 个用例（01-10）生成完整可执行的 OpenFOAM 算例文件。
-在 build 目录下，out_01_single_zone_tetra ... out_10_fan_rotor_stator 已含 constant/polyMesh，
+为 cgns_test_lib 转换后的用例（01-12、minimal）生成完整可执行的 OpenFOAM 算例文件。
+在 build 目录下，out_01_...、out_12_...、out_minimal 等已含 constant/polyMesh 时，
 本脚本补充 system/、0/、constant/ 中其余文件，使每个目录可直接运行 simpleFoam。
 
 用法（在项目根目录）:
@@ -17,7 +17,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 REPO_ROOT = SCRIPT_DIR.parent.parent
 BUILD_DIR = Path(sys.argv[1]) if len(sys.argv) > 1 else REPO_ROOT / "build"
 
-# 01-10 的用例输出目录名（与 run_all_conversions.sh 一致）
+# 01-12、minimal 的用例输出目录名（与 run_all_conversions.sh 及 write_cgns_minimal 输出一致）
 CASE_DIRS = [
     "out_01_single_zone_tetra",
     "out_02_single_zone_hex",
@@ -29,6 +29,9 @@ CASE_DIRS = [
     "out_08_heat_sink",
     "out_09_two_zone_interface",
     "out_10_fan_rotor_stator",
+    "out_11_fan_transient_interface",
+    "out_12_multi_zone_mixed",
+    "out_minimal",
 ]
 
 
@@ -140,7 +143,32 @@ def ensure_wall_boundary(case_path: Path, patches: list):
     boundary_file.write_text(text, encoding="utf-8")
 
 
-def create_case(case_path: Path, patches: list) -> bool:
+def write_dynamic_mesh_dict(case_path: Path, cell_zone_name: str = "Rotor") -> None:
+    """为风扇瞬态案例写入 constant/dynamicMeshDict（Rotor 区绕 z 轴旋转）。"""
+    (case_path / "constant").mkdir(exist_ok=True)
+    content = write_foam_header("dynamicMeshDict", "dictionary") + f"""
+dynamicFvMesh   dynamicMotionSolverFvMesh;
+
+motionSolverLibs ("libfvMotionSolvers.so");
+
+motionSolver    solidBody;
+
+solidBodyMotionFunction rotatingMotion;
+
+cellZone        {cell_zone_name};
+
+rotatingMotionCoeffs
+{{
+    origin      (0 0 0);
+    axis        (0 0 1);
+    omega       10;
+}}
+// ************************************************************************* //
+"""
+    (case_path / "constant" / "dynamicMeshDict").write_text(content, encoding="utf-8")
+
+
+def create_case(case_path: Path, patches: list, case_dir_name: str = "") -> bool:
     case_path = case_path.resolve()
     if not (case_path / "constant" / "polyMesh" / "boundary").exists():
         return False
@@ -271,6 +299,10 @@ simulationType  laminar;
     for f in ("nut", "nuTilda"):
         (case_path / "0" / f).unlink(missing_ok=True)
 
+    # 案例 11：风扇瞬态，添加 dynamicMeshDict（Rotor 区绕 z 轴旋转）
+    if "11_fan_transient" in case_dir_name:
+        write_dynamic_mesh_dict(case_path, cell_zone_name="Rotor")
+
     # Allrun (source OpenFOAM if OPENFOAM_BASHRC set, else assume env loaded)
     (case_path / "Allrun").write_text("""#!/bin/bash
 cd "${0%/*}" || exit 1
@@ -298,13 +330,13 @@ def main():
         if not patches:
             print(f"Skip {name}: no boundary or polyMesh missing")
             continue
-        if create_case(case_path, patches):
+        if create_case(case_path, patches, case_dir_name=name):
             print(f"OK  {name}")
             ok += 1
         else:
             print(f"Fail {name}")
-    print(f"\nDone: {ok}/{len(CASE_DIRS)} cases created. Run from build: cd out_01_single_zone_tetra && ./Allrun")
-    sys.exit(0 if ok == len(CASE_DIRS) else 1)
+    print(f"\nDone: {ok}/{len(CASE_DIRS)} cases created (missing dirs skipped). Run from build: cd out_01_single_zone_tetra && ./Allrun")
+    sys.exit(0 if ok > 0 else 1)
 
 
 if __name__ == "__main__":

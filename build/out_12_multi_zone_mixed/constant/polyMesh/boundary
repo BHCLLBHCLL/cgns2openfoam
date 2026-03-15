@@ -18,7 +18,7 @@ FoamFile
 (
     defaultFaces
     {
-        type            patch;
+        type            wall;
         nFaces          34;
         startFace       17;
     }

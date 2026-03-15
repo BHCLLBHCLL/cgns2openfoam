@@ -1,27 +1,24 @@
 /*--------------------------------*- C++ -*----------------------------------*\
 | =========                 |                                                 |
 | \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
-|  \\    /   O peration     | Website:  https://openfoam.org                  |
-|   \\  /    A nd           | Version:  converted by cgns2openfoam            |
+|  \\    /   O peration     | Version:  2412                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
 |    \\/     M anipulation  |                                                 |
 \*---------------------------------------------------------------------------*/
 FoamFile
 {
     version     2.0;
     format      ascii;
-    class       polyBoundaryMesh;
-    object      boundary;
+    arch        "LSB;label=32;scalar=64";
+    class       uniformDimensionedScalarField;
+    location    "1/uniform";
+    object      cumulativeContErr;
 }
 // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
-1
-(
-    defaultFaces
-    {
-        type            wall;
-        nFaces          48;
-        startFace       24;
-    }
-)
+dimensions      [0 0 0 0 0 0 0];
+value           0;
+
+
 
 // ************************************************************************* //
